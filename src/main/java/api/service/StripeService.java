@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
-import com.stripe.model.PaymentIntent;
 
 import java.util.HashMap;
 import java.util.Map;
