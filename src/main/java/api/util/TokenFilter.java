@@ -1,5 +1,7 @@
 package api.util;
 
+import api.model.Session;
+import api.service.SessionService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -13,8 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -24,12 +26,15 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
+    private final SessionService sessionService;
 
     private final Map<String, CachedAuth> tokenCache = new ConcurrentHashMap<>();
 
-    public TokenFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+    public TokenFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService,
+            SessionService sessionService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userDetailsService = userDetailsService;
+        this.sessionService = sessionService;
     }
 
     @Getter
@@ -49,25 +54,13 @@ public class TokenFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain) throws ServletException, IOException {
         cleanupExpiredCache();
 
-        String jwt = extractJwtFromRequest(request);
+        Optional<Session> sessionOpt = sessionService.findBySessionCookie(request);
 
-        if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            authenticateUsingToken(jwt);
+        if (sessionOpt.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
+            authenticateUsingToken(sessionOpt.get().getJwt());
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String extractJwtFromRequest(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null)
-            return null;
-
-        return Arrays.stream(cookies)
-                .filter(cookie -> "jwt".equals(cookie.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
     }
 
     private void authenticateUsingToken(String jwt) {

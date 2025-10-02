@@ -1,22 +1,25 @@
 package api.service;
 
+import api.model.Session;
 import api.model.User;
+import api.repository.SessionRepository;
 import jakarta.servlet.http.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// todo: изменить на сессии
 @Service
 @AllArgsConstructor
 public class SessionService {
     private static final int COOKIE_MAX_AGE = 259200; // 3 days in seconds
+    private final SessionRepository sessionRepository;
 
     public void clearAuthCookies(HttpServletResponse response) {
-        addCookie(response, "jwt", null, 0);
-        addCookie(response, "username", null, 0);
-        addCookie(response, "email", null, 0);
+        addCookie(response, "sessionId", null, 0);
     }
 
     public void addCookie(HttpServletResponse response, String name, String value, int expiration) {
@@ -28,10 +31,38 @@ public class SessionService {
         response.addCookie(cookie);
     }
 
+    @Transactional
     public void setAuthCookies(HttpServletResponse response, String jwt, User user) {
-        addCookie(response, "jwt", jwt, COOKIE_MAX_AGE);
-        addCookie(response, "username", user.getUsername(), COOKIE_MAX_AGE);
-        addCookie(response, "email", user.getEmail(), COOKIE_MAX_AGE);
+        String sessionId = UUID.randomUUID().toString();
+
+        Session session = new Session();
+        session.setSessionId(sessionId);
+        session.setJwt(jwt);
+        session.setUsername(user.getUsername());
+        session.setEmail(user.getEmail());
+        session.setExpiresAt(LocalDateTime.now().plusSeconds(COOKIE_MAX_AGE));
+        sessionRepository.save(session);
+
+        addCookie(response, "sessionId", sessionId, COOKIE_MAX_AGE);
+    }
+
+    public Optional<Session> findBySessionCookie(HttpServletRequest request) {
+        Map<String, String> cookies = extractCookies(request);
+        String sessionId = cookies.get("sessionId");
+        if (sessionId == null) {
+            return Optional.empty();
+        }
+        return sessionRepository.findBySessionId(sessionId)
+                .filter(s -> s.getExpiresAt() == null || s.getExpiresAt().isAfter(LocalDateTime.now()));
+    }
+
+    @Transactional
+    public void deleteSessionByRequest(HttpServletRequest request) {
+        Map<String, String> cookies = extractCookies(request);
+        String sessionId = cookies.get("sessionId");
+        if (sessionId != null) {
+            sessionRepository.deleteBySessionId(sessionId);
+        }
     }
 
     public Map<String, String> extractCookies(HttpServletRequest request) {

@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21-jdk
 
-WORKDIR /billing
+WORKDIR /api
 
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./

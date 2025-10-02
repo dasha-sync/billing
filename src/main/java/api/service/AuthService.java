@@ -50,18 +50,16 @@ public class AuthService {
         }
     }
 
-    public void signout(HttpServletResponse response) {
+    public void signout(HttpServletRequest request, HttpServletResponse response) {
+        sessionService.deleteSessionByRequest(request);
         sessionService.clearAuthCookies(response);
     }
 
     public CheckResponse checkAuth(HttpServletRequest request) {
         Map<String, String> cookies = extractCookies(request);
-        String jwt = cookies.get("jwt");
+        boolean authenticated = sessionService.findBySessionCookie(request).isPresent();
 
-        return new CheckResponse(
-                cookies.get("username"),
-                cookies.get("email"),
-                jwt != null);
+        return new CheckResponse(authenticated);
     }
 
     private void checkIfUserExists(String username, String email) {

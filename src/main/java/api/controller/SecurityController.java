@@ -17,8 +17,7 @@ public class SecurityController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<UserResponse>> signup(
-            @Valid @RequestBody SignupRequest request
-    ) {
+            @Valid @RequestBody SignupRequest request) {
         UserResponse user = authService.signup(request);
         return ResponseEntity.ok(new ApiResponse<>("Signup successful", user));
     }
@@ -32,8 +31,8 @@ public class SecurityController {
     }
 
     @PostMapping("/signout")
-    public ResponseEntity<ApiResponse<Void>> signout(HttpServletResponse response) {
-        authService.signout(response);
+    public ResponseEntity<ApiResponse<Void>> signout(HttpServletRequest request, HttpServletResponse response) {
+        authService.signout(request, response);
         return ResponseEntity.ok(new ApiResponse<>("Successfully loged out", null));
     }
 
