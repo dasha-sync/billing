@@ -2,6 +2,8 @@ package api.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Table(name = "users")
@@ -19,4 +21,11 @@ public class User {
 
     @Column
     private String password;
+
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Card> cards = new ArrayList<>();
 }
+
