@@ -81,8 +81,7 @@ public class SubscriptionService {
   public SubscriptionResponse getSubscription(String username) {
     User user = getUser(username);
 
-    BillingSubscription subscription = billingSubscriptionRepository.findByUser(user)
-        .orElseThrow(() -> new GlobalException("No subscription found", "NOT_FOUND"));
+    BillingSubscription subscription = getActiveSubscription(user);
 
     return mapToDto(subscription);
   }
