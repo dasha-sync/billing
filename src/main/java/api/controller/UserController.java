@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+  private final UserService userService;
 
-    @DeleteMapping("/destroy")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(
-            @Valid @RequestBody DeleteUserRequest request,
-            Principal principal,
-            HttpServletResponse response) {
-        userService.deleteUser(request, principal, response);
-        return ResponseEntity.ok(new ApiResponse<>("User deleted successfully", null));
-    }
+  @DeleteMapping("/destroy")
+  public ResponseEntity<ApiResponse<Void>> deleteUser(
+      @Valid @RequestBody DeleteUserRequest request,
+      Principal principal,
+      HttpServletResponse response) {
+    userService.deleteUser(request, principal, response);
+    return ResponseEntity.ok(new ApiResponse<>("User deleted successfully", null));
+  }
 }

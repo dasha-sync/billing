@@ -13,31 +13,31 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 public class SecurityController {
-    private final AuthService authService;
+  private final AuthService authService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<UserResponse>> signup(
-            @Valid @RequestBody SignupRequest request) {
-        UserResponse user = authService.signup(request);
-        return ResponseEntity.ok(new ApiResponse<>("Signup successful", user));
-    }
+  @PostMapping("/signup")
+  public ResponseEntity<ApiResponse<UserResponse>> signup(
+      @Valid @RequestBody SignupRequest request) {
+    UserResponse user = authService.signup(request);
+    return ResponseEntity.ok(new ApiResponse<>("Signup successful", user));
+  }
 
-    @PostMapping("/signin")
-    public ResponseEntity<ApiResponse<UserResponse>> signin(
-            @Valid @RequestBody SigninRequest request,
-            HttpServletResponse response) {
-        UserResponse userResponse = authService.signin(request, response);
-        return ResponseEntity.ok(new ApiResponse<>("Signin successful", userResponse));
-    }
+  @PostMapping("/signin")
+  public ResponseEntity<ApiResponse<UserResponse>> signin(
+      @Valid @RequestBody SigninRequest request,
+      HttpServletResponse response) {
+    UserResponse userResponse = authService.signin(request, response);
+    return ResponseEntity.ok(new ApiResponse<>("Signin successful", userResponse));
+  }
 
-    @PostMapping("/signout")
-    public ResponseEntity<ApiResponse<Void>> signout(HttpServletRequest request, HttpServletResponse response) {
-        authService.signout(request, response);
-        return ResponseEntity.ok(new ApiResponse<>("Successfully loged out", null));
-    }
+  @PostMapping("/signout")
+  public ResponseEntity<ApiResponse<Void>> signout(HttpServletRequest request, HttpServletResponse response) {
+    authService.signout(request, response);
+    return ResponseEntity.ok(new ApiResponse<>("Successfully loged out", null));
+  }
 
-    @GetMapping("/check")
-    public ResponseEntity<CheckResponse> checkAuth(HttpServletRequest request) {
-        return ResponseEntity.ok(authService.checkAuth(request));
-    }
+  @GetMapping("/check")
+  public ResponseEntity<CheckResponse> checkAuth(HttpServletRequest request) {
+    return ResponseEntity.ok(authService.checkAuth(request));
+  }
 }

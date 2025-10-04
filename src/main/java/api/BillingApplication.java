@@ -9,14 +9,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories("api.repository")
 public class BillingApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(BillingApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(BillingApplication.class, args);
+  }
 
-    @Bean
-    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-        return args -> {
-            System.out.println("Let's inspect the beans provided by Spring Boot:");
-        };
-    }
+  @Bean
+  public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+    return args -> {
+      System.out.println("Application successfully started!");
+    };
+  }
 }

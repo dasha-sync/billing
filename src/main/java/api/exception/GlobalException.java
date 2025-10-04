@@ -7,10 +7,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 public class GlobalException extends RuntimeException {
-    private HttpStatus status;
+  private HttpStatus status;
 
-    public GlobalException(String message, String status) {
-        super(message);
-        setStatus(HttpStatus.valueOf(status));
-    }
+  public GlobalException(String message, String status) {
+    super(message);
+    setStatus(HttpStatus.valueOf(status));
+  }
 }

@@ -7,11 +7,12 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class KafkaTopicConfig {
+
   @Bean
   public NewTopic stripeUsageTopic() {
     return TopicBuilder.name("stripe-usage-topic")
-          .partitions(1)
-          .replicas(1)
-          .build();
+      .partitions(1)
+      .replicas(1)
+      .build();
   }
 }

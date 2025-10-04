@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class AddCardRequest {
-    @NotBlank(message = "PaymentMethodId is required")
-    private String paymentMethodId;
+  @NotBlank(message = "PaymentMethodId is required")
+  private String paymentMethodId;
 }

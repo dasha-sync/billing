@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CheckResponse {
-    private Boolean authenticated;
+  private Boolean authenticated;
 }

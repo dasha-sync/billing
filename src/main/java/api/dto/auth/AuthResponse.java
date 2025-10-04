@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AuthResponse {
-    private UserResponse user;
+  private UserResponse user;
 }

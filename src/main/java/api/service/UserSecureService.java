@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UserSecureService implements UserDetailsService {
-    private UserRepository userRepository;
+  private UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository
-                .findUserByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format("User '%s' not found", username)
-                ));
-        return UserDetailsImplementation.build(user);
-    }
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    User user = userRepository
+        .findUserByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException(
+            String.format("User '%s' not found", username)
+        ));
+    return UserDetailsImplementation.build(user);
+  }
 }

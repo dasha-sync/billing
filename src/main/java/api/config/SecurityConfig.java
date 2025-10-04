@@ -22,32 +22,32 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-    private TokenFilter tokenFilter;
-    private UserSecureService userSecureService;
-    private final PasswordEncoder passwordEncoder;
+  private TokenFilter tokenFilter;
+  private UserSecureService userSecureService;
+  private final PasswordEncoder passwordEncoder;
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration auth)
-            throws Exception {
-        return auth.getAuthenticationManager();
-    }
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration auth)
+      throws Exception {
+    return auth.getAuthenticationManager();
+  }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(request ->
-                        new CorsConfiguration().applyPermitDefaultValues()))
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/secured/**", "/ws/**").authenticated()
-                        .anyRequest().permitAll())
-                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(AbstractHttpConfigurer::disable)
+        .cors(cors -> cors.configurationSource(request ->
+            new CorsConfiguration().applyPermitDefaultValues()))
+        .exceptionHandling(exceptions -> exceptions
+            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/secured/**", "/ws/**").authenticated()
+            .anyRequest().permitAll())
+        .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+    return http.build();
+  }
 }

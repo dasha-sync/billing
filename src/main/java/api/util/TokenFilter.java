@@ -22,77 +22,77 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 public class TokenFilter extends OncePerRequestFilter {
-    private static final long CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+  private static final long CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsService userDetailsService;
-    private final SessionService sessionService;
+  private final JwtTokenProvider jwtTokenProvider;
+  private final UserDetailsService userDetailsService;
+  private final SessionService sessionService;
 
-    private final Map<String, CachedAuth> tokenCache = new ConcurrentHashMap<>();
+  private final Map<String, CachedAuth> tokenCache = new ConcurrentHashMap<>();
 
-    public TokenFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService,
-            SessionService sessionService) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userDetailsService = userDetailsService;
-        this.sessionService = sessionService;
+  public TokenFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService,
+                     SessionService sessionService) {
+    this.jwtTokenProvider = jwtTokenProvider;
+    this.userDetailsService = userDetailsService;
+    this.sessionService = sessionService;
+  }
+
+  @Getter
+  private static class CachedAuth {
+    private final UsernamePasswordAuthenticationToken auth;
+    private final long creationTime = System.currentTimeMillis();
+
+    public CachedAuth(UsernamePasswordAuthenticationToken auth) {
+      this.auth = auth;
+    }
+  }
+
+  @Override
+  protected void doFilterInternal(
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain) throws ServletException, IOException {
+    cleanupExpiredCache();
+
+    Optional<Session> sessionOpt = sessionService.findBySessionCookie(request);
+
+    if (sessionOpt.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
+      authenticateUsingToken(sessionOpt.get().getJwt());
     }
 
-    @Getter
-    private static class CachedAuth {
-        private final UsernamePasswordAuthenticationToken auth;
-        private final long creationTime = System.currentTimeMillis();
+    filterChain.doFilter(request, response);
+  }
 
-        public CachedAuth(UsernamePasswordAuthenticationToken auth) {
-            this.auth = auth;
-        }
+  private void authenticateUsingToken(String jwt) {
+    CachedAuth cached = tokenCache.get(jwt);
+    if (cached != null) {
+      SecurityContextHolder.getContext().setAuthentication(cached.getAuth());
+      return;
     }
 
-    @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
-        cleanupExpiredCache();
+    try {
+      String username = jwtTokenProvider.getNameFromJwt(jwt);
+      if (username == null)
+        return;
 
-        Optional<Session> sessionOpt = sessionService.findBySessionCookie(request);
+      UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+      UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
+          userDetails.getAuthorities());
 
-        if (sessionOpt.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
-            authenticateUsingToken(sessionOpt.get().getJwt());
-        }
+      tokenCache.put(jwt, new CachedAuth(auth));
+      SecurityContextHolder.getContext().setAuthentication(auth);
 
-        filterChain.doFilter(request, response);
+    } catch (ExpiredJwtException e) {
+      log.warn("JWT expired", e);
+      tokenCache.remove(jwt);
+    } catch (Exception e) {
+      log.error("JWT authentication error", e);
+      tokenCache.remove(jwt);
     }
+  }
 
-    private void authenticateUsingToken(String jwt) {
-        CachedAuth cached = tokenCache.get(jwt);
-        if (cached != null) {
-            SecurityContextHolder.getContext().setAuthentication(cached.getAuth());
-            return;
-        }
-
-        try {
-            String username = jwtTokenProvider.getNameFromJwt(jwt);
-            if (username == null)
-                return;
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
-                    userDetails.getAuthorities());
-
-            tokenCache.put(jwt, new CachedAuth(auth));
-            SecurityContextHolder.getContext().setAuthentication(auth);
-
-        } catch (ExpiredJwtException e) {
-            log.warn("JWT expired", e);
-            tokenCache.remove(jwt);
-        } catch (Exception e) {
-            log.error("JWT authentication error", e);
-            tokenCache.remove(jwt);
-        }
-    }
-
-    private void cleanupExpiredCache() {
-        long now = System.currentTimeMillis();
-        tokenCache.entrySet().removeIf(entry -> now - entry.getValue().getCreationTime() > CACHE_TTL_MS);
-    }
+  private void cleanupExpiredCache() {
+    long now = System.currentTimeMillis();
+    tokenCache.entrySet().removeIf(entry -> now - entry.getValue().getCreationTime() > CACHE_TTL_MS);
+  }
 }
