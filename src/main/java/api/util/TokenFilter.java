@@ -1,7 +1,6 @@
 package api.util;
 
 import api.model.Session;
-import api.service.SessionService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -26,15 +25,15 @@ public class TokenFilter extends OncePerRequestFilter {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final UserDetailsService userDetailsService;
-  private final SessionService sessionService;
+  private final SessionProvider sessionProvider;
 
   private final Map<String, CachedAuth> tokenCache = new ConcurrentHashMap<>();
 
   public TokenFilter(JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService,
-                     SessionService sessionService) {
+                     SessionProvider sessionProvider) {
     this.jwtTokenProvider = jwtTokenProvider;
     this.userDetailsService = userDetailsService;
-    this.sessionService = sessionService;
+    this.sessionProvider = sessionProvider;
   }
 
   @Getter
@@ -54,7 +53,7 @@ public class TokenFilter extends OncePerRequestFilter {
       @NonNull FilterChain filterChain) throws ServletException, IOException {
     cleanupExpiredCache();
 
-    Optional<Session> sessionOpt = sessionService.findBySessionCookie(request);
+    Optional<Session> sessionOpt = sessionProvider.findBySessionCookie(request);
 
     if (sessionOpt.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
       authenticateUsingToken(sessionOpt.get().getJwt());

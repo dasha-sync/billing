@@ -7,6 +7,7 @@ import api.model.Card;
 import api.model.User;
 import api.repository.CardRepository;
 import api.repository.UserRepository;
+import api.util.StripeProvider;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,13 +18,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CardService {
-  private final StripeService stripeService;
   private final CardRepository cardRepository;
   private final UserRepository userRepository;
+  private final StripeProvider stripeProvider;
 
   public CardResponse addCard(AddCardRequest request, Principal principal) throws Exception {
     User user = getUser(principal);
-    Card card = stripeService.attachCard(user, request.getPaymentMethodId());
+    Card card = stripeProvider.attachCard(user, request.getPaymentMethodId());
     return mapToDto(card);
   }
 

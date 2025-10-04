@@ -8,24 +8,27 @@ import api.model.User;
 import api.repository.BillingSubscriptionRepository;
 import api.repository.CardRepository;
 import api.repository.UserRepository;
+import api.util.ApiKeyProvider;
+import api.util.StripeProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
-
-  private final StripeService stripeService;
+  private final StripeProvider stripeProvider;
   private final BillingSubscriptionRepository billingSubscriptionRepository;
   private final UserRepository userRepository;
   private final CardRepository cardRepository;
+  private final ApiKeyProvider apiKeyProvider;
 
   public SubscriptionResponse createSubscription(Long cardId, String username) throws Exception {
     User user = findUser(username);
     ensureNoActiveSubscription(user);
     Card card = validateUserCard(cardId, user);
 
-    BillingSubscription subscription = stripeService.createSubscription(user, card);
+    BillingSubscription subscription = stripeProvider.createSubscription(user, card);
+    subscription.setApiKey(apiKeyProvider.generate(user));
     BillingSubscription saved = billingSubscriptionRepository.save(subscription);
 
     return mapToDto(saved);
@@ -35,7 +38,7 @@ public class SubscriptionService {
     User user = findUser(username);
     BillingSubscription subscription = findActiveSubscription(user);
 
-    stripeService.cancelSubscription(subscription);
+    stripeProvider.cancelSubscription(subscription);
     subscription.setStatus(BillingSubscription.SubscriptionStatus.CANCELLED);
 
     return mapToDto(billingSubscriptionRepository.save(subscription));
@@ -46,7 +49,7 @@ public class SubscriptionService {
     BillingSubscription subscription = findActiveSubscription(user);
     Card card = validateUserCard(cardId, user);
 
-    stripeService.updateSubscriptionPaymentMethod(subscription, card);
+    stripeProvider.updateSubscriptionPaymentMethod(subscription, card);
     subscription.setPaymentMethodId(card.getPaymentMethodId());
 
     return mapToDto(billingSubscriptionRepository.save(subscription));
@@ -73,7 +76,9 @@ public class SubscriptionService {
 
   private void ensureNoActiveSubscription(User user) {
     billingSubscriptionRepository.findByUserAndStatus(user, BillingSubscription.SubscriptionStatus.ACTIVE)
-        .ifPresent(s -> { throw new GlobalException("User already has an active subscription", "CONFLICT"); });
+        .ifPresent(s -> {
+          throw new GlobalException("User already has an active subscription", "CONFLICT");
+        });
   }
 
   private BillingSubscription findActiveSubscription(User user) {
@@ -83,13 +88,7 @@ public class SubscriptionService {
 
   private SubscriptionResponse mapToDto(BillingSubscription sub) {
     return new SubscriptionResponse(
-        sub.getId(),
         sub.getAmount(),
-        sub.getPaymentMethodId(),
-        sub.getStripeSubscriptionId(),
-        sub.getStatus(),
-        sub.getCreatedAt(),
-        sub.getUpdatedAt()
-    );
+        sub.getApiKey());
   }
 }

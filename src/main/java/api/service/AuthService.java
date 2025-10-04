@@ -6,6 +6,7 @@ import api.exception.GlobalException;
 import api.model.User;
 import api.repository.UserRepository;
 import api.util.JwtTokenProvider;
+import api.util.SessionProvider;
 import jakarta.servlet.http.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -25,7 +26,7 @@ public class AuthService {
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider jwtTokenProvider;
   private final UserService userService;
-  private final SessionService sessionService;
+  private final SessionProvider sessionProvider;
 
   public UserResponse signup(SignupRequest request) {
     checkIfUserExists(request.getUsername(), request.getEmail());
@@ -42,7 +43,7 @@ public class AuthService {
       SecurityContextHolder.getContext().setAuthentication(auth);
 
       String jwt = jwtTokenProvider.generateToken(auth);
-      sessionService.setAuthCookies(response, jwt, user);
+      sessionProvider.setAuthCookies(response, jwt, user);
 
       return userService.mapToUserDto(user);
     } catch (BadCredentialsException | NoSuchAlgorithmException e) {
@@ -51,13 +52,13 @@ public class AuthService {
   }
 
   public void signout(HttpServletRequest request, HttpServletResponse response) {
-    sessionService.deleteSessionByRequest(request);
-    sessionService.clearAuthCookies(response);
+    sessionProvider.deleteSessionByRequest(request);
+    sessionProvider.clearAuthCookies(response);
   }
 
   public CheckResponse checkAuth(HttpServletRequest request) {
     Map<String, String> cookies = extractCookies(request);
-    boolean authenticated = sessionService.findBySessionCookie(request).isPresent();
+    boolean authenticated = sessionProvider.findBySessionCookie(request).isPresent();
 
     return new CheckResponse(authenticated);
   }

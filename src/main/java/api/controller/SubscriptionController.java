@@ -2,9 +2,7 @@ package api.controller;
 
 import api.dto.common.ApiResponse;
 import api.dto.subscription.SubscriptionResponse;
-import api.dto.subscription.UpdatePaymentMethodRequest;
 import api.service.SubscriptionService;
-import jakarta.validation.Valid;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

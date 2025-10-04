@@ -4,6 +4,7 @@ import api.dto.user.*;
 import api.exception.GlobalException;
 import api.model.User;
 import api.repository.*;
+import api.util.SessionProvider;
 import jakarta.servlet.http.*;
 import jakarta.transaction.Transactional;
 import java.security.*;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final SessionService sessionService;
+  private final SessionProvider sessionProvider;
 
   @Transactional
   public void deleteUser(
@@ -36,7 +37,7 @@ public class UserService {
       throw new GlobalException("Failed to delete user", "CONFLICT");
     }
 
-    sessionService.clearAuthCookies(response);
+    sessionProvider.clearAuthCookies(response);
   }
 
   public User getCurrentUser(Principal principal) {

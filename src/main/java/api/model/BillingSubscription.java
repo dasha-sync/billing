@@ -3,8 +3,8 @@ package api.model;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.Data;
-
 
 @Data
 @Table(name = "billing_subscriptions")
@@ -26,6 +26,9 @@ public class BillingSubscription {
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private SubscriptionStatus status;
+
+  @Column(name = "api_key", nullable = false, unique = true)
+  private String apiKey;
 
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;

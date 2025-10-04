@@ -1,4 +1,4 @@
-package api.service;
+package api.util;
 
 import api.model.Session;
 import api.model.User;
@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 
-@Service
+@Component
 @AllArgsConstructor
-public class SessionService {
+public class SessionProvider {
   private static final int COOKIE_MAX_AGE = 259200; // 3 days in seconds
   private final SessionRepository sessionRepository;
 

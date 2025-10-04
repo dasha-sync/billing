@@ -1,4 +1,4 @@
-package api.service;
+package api.util;
 
 import api.model.BillingSubscription;
 import api.model.Card;
@@ -13,11 +13,11 @@ import java.math.BigDecimal;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class StripeService {
+public class StripeProvider {
   private final UserRepository userRepository;
   private final CardRepository cardRepository;
 
