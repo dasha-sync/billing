@@ -5,12 +5,12 @@ import api.dto.subscription.SubscriptionResponse;
 import api.dto.subscription.UpdatePaymentMethodRequest;
 import api.service.SubscriptionService;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/subscription")
@@ -27,17 +27,17 @@ public class SubscriptionController {
     return ResponseEntity.ok(new ApiResponse<>("Subscription created successfully", subscription));
   }
 
-  @PostMapping("/cancel")
+  @DeleteMapping("/cancel")
   public ResponseEntity<ApiResponse<SubscriptionResponse>> cancelSubscription(Principal principal) throws Exception {
     SubscriptionResponse subscription = subscriptionService.cancelSubscription(principal.getName());
     return ResponseEntity.ok(new ApiResponse<>("Subscription cancelled successfully", subscription));
   }
 
-  @PutMapping("/payment-method")
+  @PutMapping("/change-payment-method/{cardId}")
   public ResponseEntity<ApiResponse<SubscriptionResponse>> updatePaymentMethod(
-      @Valid @RequestBody UpdatePaymentMethodRequest request,
+      @PathVariable Long cardId,
       Principal principal) throws Exception {
-    SubscriptionResponse subscription = subscriptionService.updatePaymentMethod(request, principal.getName());
+    SubscriptionResponse subscription = subscriptionService.updatePaymentMethod(cardId, principal.getName());
     return ResponseEntity.ok(new ApiResponse<>("Payment method updated successfully", subscription));
   }
 

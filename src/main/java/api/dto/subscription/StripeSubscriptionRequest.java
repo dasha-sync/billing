@@ -1,10 +1,10 @@
 package api.dto.subscription;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor

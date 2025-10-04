@@ -1,7 +1,7 @@
 package api.config;
 
-import api.util.TokenFilter;
 import api.service.UserSecureService;
+import api.util.TokenFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpStatus;

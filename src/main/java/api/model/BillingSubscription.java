@@ -1,13 +1,13 @@
 package api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import lombok.Data;
+
 
 @Data
-@Table(name = "subscriptions")
+@Table(name = "billing_subscriptions")
 @Entity
 public class BillingSubscription {
   @Id

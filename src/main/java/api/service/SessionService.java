@@ -4,13 +4,13 @@ import api.model.Session;
 import api.model.User;
 import api.repository.SessionRepository;
 import jakarta.servlet.http.*;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

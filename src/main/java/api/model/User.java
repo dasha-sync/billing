@@ -1,9 +1,9 @@
 package api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
 @Data
 @Table(name = "users")
@@ -27,5 +27,8 @@ public class User {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Card> cards = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<BillingSubscription> billingSubscriptions = new ArrayList<>();
 }
 
