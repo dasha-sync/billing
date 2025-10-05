@@ -27,7 +27,9 @@ public class StripeProvider {
   // -------------------- Customer / Payment --------------------
 
   public String createCustomerIfNotExists(User user) throws Exception {
-    if (user.getStripeCustomerId() != null) return user.getStripeCustomerId();
+    if (user.getStripeCustomerId() != null) {
+      return user.getStripeCustomerId();
+    }
 
     Customer customer = Customer.create(Map.of("email", user.getEmail()));
     user.setStripeCustomerId(customer.getId());

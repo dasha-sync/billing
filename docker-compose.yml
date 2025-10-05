@@ -16,7 +16,7 @@ services:
       - spay-net
 
   usage:
-    image: dashasync/usage-worker:latest
+    image: dashasync/usage-worker:latest   # build: context: ./../usage-worker
     ports:
       - 8081:8080
     depends_on:

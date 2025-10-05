@@ -57,7 +57,6 @@ public class AuthService {
   }
 
   public CheckResponse checkAuth(HttpServletRequest request) {
-    Map<String, String> cookies = extractCookies(request);
     boolean authenticated = sessionProvider.findBySessionCookie(request).isPresent();
 
     return new CheckResponse(authenticated);
