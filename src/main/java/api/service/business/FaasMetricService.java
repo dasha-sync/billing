@@ -6,18 +6,21 @@ import api.model.FaasMetric;
 import api.model.User;
 import api.repository.FaasMetricRepository;
 import api.repository.UserRepository;
+import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class FaasMetricService {
   private final FaasMetricRepository faasMetricRepository;
   private final UserRepository userRepository;
+  private final UserService userService;
 
   @Transactional
   public void saveMetrics(String username, MetricsEvent event) {
@@ -27,6 +30,11 @@ public class FaasMetricService {
     List<FaasMetric> metricsToSave = buildMetrics(user, event);
     faasMetricRepository.saveAll(metricsToSave);
     log.debug("Saved {} metrics for user={} func={}", metricsToSave.size(), username, event.getFuncName());
+  }
+
+  public List<String> getFaas(Principal principal) {
+    User user = userService.getCurrentUser(principal);
+    return faasMetricRepository.findDistinctFuncNamesByUser(user);
   }
 
   private List<FaasMetric> buildMetrics(User user, MetricsEvent event) {

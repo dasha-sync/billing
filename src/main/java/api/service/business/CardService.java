@@ -2,11 +2,9 @@ package api.service.business;
 
 import api.dto.card.AddCardRequest;
 import api.dto.card.CardResponse;
-import api.exception.GlobalException;
 import api.model.Card;
 import api.model.User;
 import api.repository.CardRepository;
-import api.repository.UserRepository;
 import api.util.StripeProvider;
 import java.security.Principal;
 import java.util.List;
@@ -19,26 +17,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CardService {
   private final CardRepository cardRepository;
-  private final UserRepository userRepository;
   private final StripeProvider stripeProvider;
+  private final UserService userService;
 
   public CardResponse addCard(AddCardRequest request, Principal principal) throws Exception {
-    User user = getUser(principal);
+    User user = userService.getCurrentUser(principal);
     Card card = stripeProvider.attachCard(user, request.getPaymentMethodId());
     return mapToDto(card);
   }
 
   public List<CardResponse> getCards(Principal principal) {
-    User user = getUser(principal);
+    User user = userService.getCurrentUser(principal);
     return cardRepository.findByUser(user)
         .stream()
         .map(this::mapToDto)
         .collect(Collectors.toList());
-  }
-
-  private User getUser(Principal principal) {
-    return userRepository.findUserByUsername(principal.getName())
-        .orElseThrow(() -> new GlobalException("User not found", "NOT_FOUND"));
   }
 
   private CardResponse mapToDto(Card card) {

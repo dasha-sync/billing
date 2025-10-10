@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Data
 @Entity
 @Table(name = "faas_metrics")
 @AllArgsConstructor
+@NoArgsConstructor
 public class FaasMetric {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +34,3 @@ public class FaasMetric {
   @Column(name = "ts", nullable = false, updatable = false)
   private OffsetDateTime ts;
 }
-
