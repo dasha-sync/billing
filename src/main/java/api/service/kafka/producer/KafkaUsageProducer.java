@@ -1,4 +1,4 @@
-package api.service.kafka;
+package api.service.kafka.producer;
 
 import api.dto.kafka.UsageEvent;
 import api.model.BillingSubscription;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaUsageProducer {
-
   private static final String TOPIC_NAME = "stripe-usage-topic";
   private final KafkaTemplate<String, UsageEvent> kafkaTemplate;
 

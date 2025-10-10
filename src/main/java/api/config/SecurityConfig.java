@@ -1,6 +1,6 @@
 package api.config;
 
-import api.service.UserSecureService;
+import api.service.business.UserSecureService;
 import api.util.TokenFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.*;

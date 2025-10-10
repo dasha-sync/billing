@@ -2,7 +2,7 @@ package api.controller;
 
 import api.dto.common.ApiResponse;
 import api.dto.user.*;
-import api.service.UserService;
+import api.service.business.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.security.Principal;

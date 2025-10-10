@@ -3,7 +3,7 @@ services:
     build:
       context: .
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
       kafka:
         condition: service_healthy
@@ -18,7 +18,7 @@ services:
   usage:
     image: dashasync/usage-worker:latest   # build: context: ./../usage-worker
     ports:
-      - 8081:8080
+      - "8081:8080"
     depends_on:
       kafka:
         condition: service_healthy
@@ -33,7 +33,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: spay
     ports:
-      - 5433:5432
+      - "5433:5432"
     networks:
       - spay-net
 
@@ -43,7 +43,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 2181:2181
+      - "2181:2181"
     networks:
       - spay-net
 
@@ -68,6 +68,49 @@ services:
       retries: 10
     networks:
       - spay-net
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8085:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - collector1
+      - collector2
+      - collector3
+    networks:
+      - spay-net
+
+  collector1:
+    build:
+      context: ./../collector
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - spay-net
+    depends_on:
+      - kafka
+
+  collector2:
+    build:
+      context: ./../collector
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - spay-net
+    depends_on:
+      - kafka
+
+  collector3:
+    build:
+      context: ./../collector
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - spay-net
+    depends_on:
+      - kafka
 
 networks:
   spay-net:

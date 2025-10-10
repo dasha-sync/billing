@@ -3,7 +3,7 @@ package api.controller;
 import api.dto.card.AddCardRequest;
 import api.dto.card.CardResponse;
 import api.dto.common.ApiResponse;
-import api.service.CardService;
+import api.service.business.CardService;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;

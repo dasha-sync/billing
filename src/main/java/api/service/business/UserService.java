@@ -1,4 +1,4 @@
-package api.service;
+package api.service.business;
 
 import api.dto.user.*;
 import api.exception.GlobalException;

@@ -3,7 +3,7 @@ package api.controller;
 import api.dto.auth.*;
 import api.dto.common.ApiResponse;
 import api.dto.user.*;
-import api.service.AuthService;
+import api.service.business.AuthService;
 import jakarta.servlet.http.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

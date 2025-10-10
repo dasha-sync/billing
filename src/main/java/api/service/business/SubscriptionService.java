@@ -1,4 +1,4 @@
-package api.service;
+package api.service.business;
 
 import api.dto.subscription.SubscriptionResponse;
 import api.exception.GlobalException;

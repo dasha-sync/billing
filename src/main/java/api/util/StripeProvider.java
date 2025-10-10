@@ -87,6 +87,7 @@ public class StripeProvider {
         .setCustomer(customerId)
         .addItem(SubscriptionCreateParams.Item.builder().setPrice(priceId).build())
         .setDefaultPaymentMethod(paymentMethodId)
+        .setCollectionMethod(SubscriptionCreateParams.CollectionMethod.CHARGE_AUTOMATICALLY)
         .build();
 
     return Subscription.create(params);

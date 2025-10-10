@@ -2,7 +2,7 @@ package api.controller;
 
 import api.dto.common.ApiResponse;
 import api.dto.subscription.SubscriptionResponse;
-import api.service.SubscriptionService;
+import api.service.business.SubscriptionService;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package api.service.kafka;
+package api.service.kafka.producer;
 
 import api.model.BillingSubscription;
 import api.repository.BillingSubscriptionRepository;
@@ -16,7 +16,7 @@ public class UsageEventScheduler {
   private final BillingSubscriptionRepository repository;
   private final KafkaUsageProducer producer;
 
-  @Scheduled(fixedRate = 300000)
+  @Scheduled(fixedRate = 10000) // 10 сек, 300000 - 5 мин
   public void sendActiveSubscriptionsUsage() {
     processSubscriptions(
         repository.findByStatusWithUser(BillingSubscription.SubscriptionStatus.ACTIVE),
