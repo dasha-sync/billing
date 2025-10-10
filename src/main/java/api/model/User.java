@@ -30,5 +30,7 @@ public class User {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<BillingSubscription> billingSubscriptions = new ArrayList<>();
-}
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<FaasMetric> faasMetrics = new ArrayList<>();
+}

@@ -1,6 +1,7 @@
 package api.service.kafka.consumer;
 
 import api.dto.kafka.MetricsEvent;
+import api.service.business.FaasMetricService;
 import api.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MetricsConsumer {
   private final JwtTokenProvider jwtTokenProvider;
+  private final FaasMetricService faasMetricService;
 
   @Value("${app.kafka.metrics-topic:metrics}")
   private String metricsTopic;
@@ -25,18 +27,21 @@ public class MetricsConsumer {
       return;
     }
 
+    String username = extractUsername(event);
+    if (username == null) {
+      return;
+    }
+
+    log.info("Metrics received: user={}, func={}", username, event.getFuncName());
+    faasMetricService.saveMetrics(username, event);
+  }
+
+  private String extractUsername(MetricsEvent event) {
     try {
-      String username = jwtTokenProvider.getNameFromJwt(event.getApiKey());
-      log.info(
-          "Metrics received: user={}, func={}, m1={}, m2={}, m3={}",
-          username,
-          event.getFuncName(),
-          event.getMetric1(),
-          event.getMetric2(),
-          event.getMetric3());
-      // TODO: persist or process metrics as needed
+      return jwtTokenProvider.getNameFromJwt(event.getApiKey());
     } catch (Exception ex) {
-      log.warn("Invalid apiKey in MetricsEvent for func {}: {}", event.getFuncName(), ex.getMessage());
+      log.warn("Invalid apiKey for func {}: {}", event.getFuncName(), ex.getMessage());
+      return null;
     }
   }
 }

@@ -48,4 +48,9 @@ public class UserService {
   public UserResponse mapToUserDto(User user) {
     return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
   }
+
+  public User getUserByEmail(String email) {
+    return userRepository.findUserByEmail(email)
+        .orElseThrow(() -> new GlobalException("User not found", "NOT_FOUND"));
+  }
 }

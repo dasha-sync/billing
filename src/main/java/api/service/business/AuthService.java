@@ -38,7 +38,7 @@ public class AuthService {
 
   public UserResponse signin(SigninRequest request, HttpServletResponse response) {
     try {
-      User user = getUserByEmail(request.getEmail());
+      User user = userService.getUserByEmail(request.getEmail());
       Authentication auth = authenticateUser(user, request.getPassword());
       SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -83,11 +83,6 @@ public class AuthService {
   private Authentication authenticateUser(User user, String password) {
     return authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(user.getUsername(), password));
-  }
-
-  private User getUserByEmail(String email) {
-    return userRepository.findUserByEmail(email)
-        .orElseThrow(() -> new GlobalException("User not found", "NOT_FOUND"));
   }
 
   private Map<String, String> extractCookies(HttpServletRequest request) {

@@ -83,8 +83,7 @@ services:
       - spay-net
 
   collector1:
-    build:
-      context: ./../collector
+    image: dashasync/collector:latest
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
@@ -93,8 +92,7 @@ services:
       - kafka
 
   collector2:
-    build:
-      context: ./../collector
+    image: dashasync/collector:latest
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
@@ -103,8 +101,7 @@ services:
       - kafka
 
   collector3:
-    build:
-      context: ./../collector
+    image: dashasync/collector:latest
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
