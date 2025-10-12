@@ -83,31 +83,59 @@ services:
       - spay-net
 
   collector1:
-    image: dashasync/collector:latest
+    image: dashasync/collector:latest # build: context: ./../collector
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
       - spay-net
     depends_on:
-      - kafka
+      db:
+        condition: service_started
+      kafka:
+        condition: service_healthy
 
   collector2:
-    image: dashasync/collector:latest
+    image: dashasync/collector:latest # build: context: ./../collector
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
       - spay-net
     depends_on:
-      - kafka
+      db:
+        condition: service_started
+      kafka:
+        condition: service_healthy
 
   collector3:
-    image: dashasync/collector:latest
+    image: dashasync/collector:latest # build: context: ./../collector
     environment:
       SPRING_PROFILES_ACTIVE: docker
     networks:
       - spay-net
     depends_on:
-      - kafka
+      db:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus.yml
+    networks:
+      - spay-net
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - spay-net
+
 
 networks:
   spay-net:
