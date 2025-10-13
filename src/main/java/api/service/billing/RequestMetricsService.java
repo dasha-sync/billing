@@ -1,4 +1,4 @@
-package api.service.business;
+package api.service.billing;
 
 import api.metrics.UserResourceMetrics;
 import api.util.ContentLengthTrackingResponseWrapper;
@@ -33,4 +33,3 @@ public class RequestMetricsService {
     return (rt.totalMemory() - rt.freeMemory()) / (1024.0 * 1024.0);
   }
 }
-

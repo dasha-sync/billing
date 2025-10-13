@@ -1,9 +1,9 @@
 package api.metrics;
 
 import io.micrometer.core.instrument.*;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
@@ -71,5 +71,23 @@ public class UserResourceMetrics {
             .baseUnit("milliseconds")
             .register(meterRegistry))
         .increment(cpuTimeMs);
+  }
+
+  public double getCounterValue(String metricName, String username) {
+    return switch (metricName) {
+      case "user_requests_total" ->
+          requestCounters.getOrDefault(username, Counter.builder(metricName).register(meterRegistry)).count();
+      case "user_cpu_time_ms_total" ->
+          cpuTimeCounters.getOrDefault(username, Counter.builder(metricName).register(meterRegistry)).count();
+      case "user_network_in_bytes_total" ->
+          networkInCounters.getOrDefault(username, Counter.builder(metricName).register(meterRegistry)).count();
+      case "user_network_out_bytes_total" ->
+          networkOutCounters.getOrDefault(username, Counter.builder(metricName).register(meterRegistry)).count();
+      default -> 0.0;
+    };
+  }
+
+  public double getMemoryUsage(String username) {
+    return memoryUsageMap.getOrDefault(username, 0.0);
   }
 }

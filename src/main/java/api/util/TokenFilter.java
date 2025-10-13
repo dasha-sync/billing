@@ -1,7 +1,7 @@
 package api.util;
 
 import api.model.Session;
-import api.service.business.RequestMetricsService;
+import api.service.billing.RequestMetricsService;
 import api.service.security.JwtAuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

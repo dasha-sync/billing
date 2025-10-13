@@ -2,6 +2,7 @@ package api.service.kafka.producer;
 
 import api.model.BillingSubscription;
 import api.repository.BillingSubscriptionRepository;
+import api.service.billing.BillingUsageCalculatorService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +13,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class UsageEventScheduler {
-
   private final BillingSubscriptionRepository repository;
   private final KafkaUsageProducer producer;
+  private final BillingUsageCalculatorService billingCalculator;
 
   @Scheduled(fixedRate = 10000) // 10 сек, 300000 - 5 мин
   public void sendActiveSubscriptionsUsage() {
+    billingCalculator.recalculateUsage();
+
     processSubscriptions(
         repository.findByStatusWithUser(BillingSubscription.SubscriptionStatus.ACTIVE),
         "scheduled"
