@@ -1,4 +1,4 @@
-package api.metrics;
+package api.metric;
 
 import io.micrometer.core.instrument.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserResourceMetrics {
-
+public class UserResourceMetric {
   private final MeterRegistry meterRegistry;
 
   private final ConcurrentHashMap<String, Counter> requestCounters = new ConcurrentHashMap<>();

@@ -1,7 +1,7 @@
 package api.service.billing;
 
 import api.config.BillingWeightsProperties;
-import api.metrics.UserResourceMetrics;
+import api.metric.UserResourceMetric;
 import api.model.BillingSubscription;
 import api.repository.BillingSubscriptionRepository;
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BillingUsageCalculatorService {
   private final BillingSubscriptionRepository subscriptionRepository;
-  private final UserResourceMetrics metrics;
+  private final UserResourceMetric metrics;
   private final BillingWeightsProperties weights;
 
   @Transactional

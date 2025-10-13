@@ -7,12 +7,7 @@ scrape_configs:
     static_configs:
       - targets: ['billing:8080']
 
-  - job_name: 'usage'
-    metrics_path: '/api/actuator/prometheus'
-    static_configs:
-      - targets: ['usage:8080']
-
   - job_name: 'collectors'
-    metrics_path: '/api/actuator/prometheus'
+    metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['collector1:8080', 'collector2:8080', 'collector3:8080']

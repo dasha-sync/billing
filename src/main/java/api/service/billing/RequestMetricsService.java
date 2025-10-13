@@ -1,6 +1,6 @@
 package api.service.billing;
 
-import api.metrics.UserResourceMetrics;
+import api.metric.UserResourceMetric;
 import api.util.ContentLengthTrackingResponseWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RequestMetricsService {
 
-  private final UserResourceMetrics metrics;
+  private final UserResourceMetric metrics;
 
   public void record(String username, long startCpuNs,
                      HttpServletRequest request,
