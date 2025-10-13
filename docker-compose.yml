@@ -123,9 +123,15 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - spay-net
+    depends_on:
+      - billing
+      - usage
+      - collector1
+      - collector2
+      - collector3
 
   grafana:
     image: grafana/grafana:latest

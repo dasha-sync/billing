@@ -1,4 +1,4 @@
-package api.service.business;
+package api.service.security;
 
 import api.model.User;
 import api.repository.UserRepository;
